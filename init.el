@@ -9,7 +9,7 @@
 (require 'keybindings-cfg)
 
 (if (member "Monaco" (font-family-list))
-    (set-face-attribute 'default nil :font "Monaco 16"))
+    (set-face-attribute 'default nil :font "Monaco 12"))
 (if window-system
     (progn
       (setq frame-title-format '(buffer-file-name "%f" ("%b")))
@@ -208,7 +208,9 @@
   :mode (("\\.erb\\'" . web-mode)
 	 ("\\.mustache\\'" . web-mode)
 	 ("\\.html?\\'" . web-mode)
-         ("\\.php\\'" . web-mode))
+         ("\\.php\\'" . web-mode)
+	 ("\\.djhtml'" . web-mode)
+	 ("\\.djjson'" . web-mode))
   :config (progn
             (setq web-mode-markup-indent-offset 2
 		  web-mode-css-indent-offset 2
