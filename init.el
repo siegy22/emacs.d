@@ -144,13 +144,12 @@
 	    (setq enh-ruby-indent-level 2
 		  enh-ruby-deep-indent-paren nil
 		  enh-ruby-bounce-deep-indent t
-		  enh-ruby-hanging-indent-level 2)
-	    (setq ruby-insert-encoding-magic-comment nil)))
+		  enh-ruby-hanging-indent-level 2)))
 
 (use-package rubocop
   :ensure t
   :defer t
-  :init (add-hook 'ruby-mode-hook 'rubocop-mode))
+  :init (add-hook 'enh-ruby-mode-hook 'rubocop-mode))
 
 
 (use-package minitest
@@ -209,9 +208,13 @@
 	 ("\\.mustache\\'" . web-mode)
 	 ("\\.html?\\'" . web-mode)
          ("\\.php\\'" . web-mode)
-	 ("\\.djhtml'" . web-mode)
-	 ("\\.djjson'" . web-mode))
+	 ("\\.djhtml\\'" . web-mode)
+	 ("\\.djjson\\'" . web-mode))
   :config (progn
             (setq web-mode-markup-indent-offset 2
 		  web-mode-css-indent-offset 2
 		  web-mode-code-indent-offset 2)))
+
+(use-package markdown-mode
+  :ensure t
+  :mode ("\\.md\\'" . markdown-mode))
