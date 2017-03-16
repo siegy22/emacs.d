@@ -1,10 +1,10 @@
-(defvar senny-temporary-file-directory (expand-file-name "~/.emacs.d/tmp"))
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
 (add-to-list 'load-path (expand-file-name "modules" user-emacs-directory))
+
 (require 'defuns-cfg)
 (require 'keybindings-cfg)
 
@@ -61,17 +61,13 @@
   :ensure t
   :commands (ag ag-regexp ag-project))
 
-(use-package tester
-  :load-path "vendor/tester.el"
-  :bind (("M-e" . tester-run-test-file))
-  :commands (tester-run-test-file tester-run-test-suite))
-
 (use-package twilight-bright-theme
   :ensure t
   :config (load-theme 'twilight-bright t))
 
 (use-package helm-core
   :ensure t)
+
 (use-package helm
   :ensure t
   :bind (("M-a" . helm-M-x)
@@ -90,6 +86,7 @@
   :config (progn
 	    (setq helm-buffers-fuzzy-matching t)
             (helm-mode 1)))
+
 (use-package helm-descbinds
   :ensure t
   :bind ("C-h b" . helm-descbinds))
@@ -127,39 +124,39 @@
   :config
   (helm-projectile-on))
 
-(use-package enh-ruby-mode
+(use-package ruby-mode
   :ensure t
   :defer t
-  :mode (("\\.rb\\'"       . enh-ruby-mode)
-         ("\\.ru\\'"       . enh-ruby-mode)
-	 ("\\.jbuilder\\'" . enh-ruby-mode)
-         ("\\.gemspec\\'"  . enh-ruby-mode)
-         ("\\.rake\\'"     . enh-ruby-mode)
-         ("Rakefile\\'"    . enh-ruby-mode)
-         ("Gemfile\\'"     . enh-ruby-mode)
-         ("Guardfile\\'"   . enh-ruby-mode)
-         ("Capfile\\'"     . enh-ruby-mode)
-         ("Vagrantfile\\'" . enh-ruby-mode))
+  :mode (("\\.rb\\'"       . ruby-mode)
+         ("\\.ru\\'"       . ruby-mode)
+	 ("\\.jbuilder\\'" . ruby-mode)
+         ("\\.gemspec\\'"  . ruby-mode)
+         ("\\.rake\\'"     . ruby-mode)
+         ("Rakefile\\'"    . ruby-mode)
+         ("Gemfile\\'"     . ruby-mode)
+         ("Guardfile\\'"   . ruby-mode)
+         ("Capfile\\'"     . ruby-mode)
+         ("Vagrantfile\\'" . ruby-mode))
   :config (progn
-	    (setq enh-ruby-indent-level 2
-		  enh-ruby-deep-indent-paren nil
-		  enh-ruby-bounce-deep-indent t
-		  enh-ruby-hanging-indent-level 2)))
+	    (setq ruby-indent-level 2
+		  ruby-deep-indent-paren nil
+		  ruby-bounce-deep-indent t
+		  ruby-hanging-indent-level 2)))
 
 (use-package rubocop
   :ensure t
   :defer t
-  :init (add-hook 'enh-ruby-mode-hook 'rubocop-mode))
+  :init (add-hook 'ruby-mode-hook 'rubocop-mode))
 
 
 (use-package minitest
-  :load-path "~/Projects/minitest-emacs"
+  :bind ("M-e" . minitest-verify)
   :config (progn
 	    (defun minitest-ruby-mode-hook ()
 	      (tester-init-test-run #'minitest-run-file "_test.rb$")
 	      (tester-init-test-suite-run #'minitest-verify-all))
 
-	    (add-hook 'enh-ruby-mode-hook 'minitest-ruby-mode-hook)))
+	    (add-hook 'ruby-mode-hook 'minitest-mode)))
 
 (use-package rspec-mode
   :ensure t
@@ -168,7 +165,7 @@
 	    (defun rspec-ruby-mode-hook ()
 	      (tester-init-test-run #'rspec-run-single-file "_spec.rb$")
 	      (tester-init-test-suite-run #'rake-test))
-	    (add-hook 'enh-ruby-mode-hook 'rspec-ruby-mode-hook)))
+	    (add-hook 'ruby-mode-hook 'rspec-ruby-mode-hook)))
 
 (use-package rbenv
   :ensure t
@@ -176,7 +173,7 @@
   :init (setq rbenv-show-active-ruby-in-modeline nil)
   :config (progn
             (global-rbenv-mode)
-            (add-hook 'enh-ruby-mode-hook 'rbenv-use-corresponding)))
+            (add-hook 'ruby-mode-hook 'rbenv-use-corresponding)))
 
 (use-package flycheck
   :ensure t
@@ -209,7 +206,8 @@
 	 ("\\.html?\\'" . web-mode)
          ("\\.php\\'" . web-mode)
 	 ("\\.djhtml\\'" . web-mode)
-	 ("\\.djjson\\'" . web-mode))
+	 ("\\.djjson\\'" . web-mode)
+	 ("\\.scss\\'" . web-mode))
   :config (progn
             (setq web-mode-markup-indent-offset 2
 		  web-mode-css-indent-offset 2
@@ -218,3 +216,10 @@
 (use-package markdown-mode
   :ensure t
   :mode ("\\.md\\'" . markdown-mode))
+
+(use-package coffee-mode
+  :ensure t
+  :mode ("\\.coffee\\'" . coffee-mode)
+  :config (progn
+	    (setq coffee-indent-tabs-mode nil
+		  coffee-tab-width 2)))
