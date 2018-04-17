@@ -4,6 +4,7 @@
       `((".*" ,temporary-file-directory t)))
 
 (add-to-list 'load-path (expand-file-name "modules" user-emacs-directory))
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 
 (require 'defuns-cfg)
 (require 'keybindings-cfg)
@@ -65,9 +66,6 @@
   :ensure t
   :config (load-theme 'twilight-bright t))
 
-(use-package helm-core
-  :ensure t)
-
 (use-package helm
   :ensure t
   :bind (("M-a" . helm-M-x)
@@ -113,16 +111,16 @@
 
 (use-package projectile
   :ensure t
-  :bind (("C-p s" . projectile-switch-open-project)
-	 ("C-x p" . projectile-switch-project))
   :config
-  (projectile-global-mode)
+  (projectile-mode)
   (setq projectile-enable-caching t))
 
 (use-package helm-projectile
   :ensure t
-  :config
-  (helm-projectile-on))
+  :bind (("C-x o" . helm-projectile-find-file)
+	 ("M-p" . helm-projectile-find-file)
+	 ("C-x r" . helm-projectile-grep))
+  :config (helm-projectile-on))
 
 (use-package ruby-mode
   :ensure t
@@ -178,8 +176,26 @@
 (use-package flycheck
   :ensure t
   :defer 5
-  :config
-  (global-flycheck-mode 1))
+  :config (progn
+	    (global-flycheck-mode 1)
+	    ;; https://github.com/purcell/exec-path-from-shell
+	    ;; only need exec-path-from-shell on OSX
+	    ;; this hopefully sets up path and other vars better
+	    (exec-path-from-shell-initialize)
+
+	    ;; disable jshint since we prefer eslint checking
+	    (setq-default flycheck-disabled-checkers
+			  (append flycheck-disabled-checkers
+				  '(javascript-jshint)))
+
+	    ;; use eslint with web-mode for jsx files
+	    (flycheck-add-mode 'javascript-eslint 'web-mode)
+	    (flycheck-add-mode 'javascript-eslint 'js2-mode)
+
+	    ;; customize flycheck temp file prefix
+	    (setq-default flycheck-temp-prefix ".flycheck")
+
+	    ))
 
 (use-package drag-stuff
   :ensure t
@@ -199,6 +215,12 @@
   :ensure t
   :mode ("\\.ya?ml\\'" . yaml-mode))
 
+
+(defun django-web-mode ()
+  "Enable django web mode."
+  (interactive)
+  (web-mode-set-engine "django"))
+
 (use-package web-mode
   :ensure t
   :mode (("\\.erb\\'" . web-mode)
@@ -207,11 +229,15 @@
          ("\\.php\\'" . web-mode)
 	 ("\\.djhtml\\'" . web-mode)
 	 ("\\.djjson\\'" . web-mode)
-	 ("\\.scss\\'" . web-mode))
+	 ("\\.scss\\'" . web-mode)
+	 ("\\.vue\\'" . web-mode))
   :config (progn
             (setq web-mode-markup-indent-offset 2
 		  web-mode-css-indent-offset 2
-		  web-mode-code-indent-offset 2)))
+		  web-mode-code-indent-offset 2
+		  web-mode-script-padding 2
+		  web-mode-style-padding 2))
+  :init (bind-key "M-w d" 'django-web-mode))
 
 (use-package markdown-mode
   :ensure t
@@ -223,3 +249,34 @@
   :config (progn
 	    (setq coffee-indent-tabs-mode nil
 		  coffee-tab-width 2)))
+
+(use-package js2-mode
+  :ensure t
+  :mode (("\\.es6\\'" . js2-mode)
+	 ("\\.js\\'" . js2-mode))
+  :config (progn
+	    (setq js2-basic-offset 2)))
+
+(use-package robe
+  :ensure t
+  :bind (("C-r C-j" . robe-jump)
+	 ("C-r C-r" . robe-rails-refresh)
+	 ("C-r C-s" . robe-start)))
+(add-hook 'ruby-mode-hook 'robe-mode)
+
+(use-package persp-projectile
+  :ensure t
+  :bind (("C-x p" . projectile-persp-switch-project)
+	 ("C-p s" . persp-switch))
+  :config (persp-mode))
+
+(defun my/use-eslint-from-node-modules ()
+  (let* ((root (locate-dominating-file
+                (or (buffer-file-name) default-directory)
+                "node_modules"))
+         (eslint (and root
+                      (expand-file-name "node_modules/eslint/bin/eslint.js"
+                                        root))))
+    (when (and eslint (file-executable-p eslint))
+      (setq-local flycheck-javascript-eslint-executable eslint))))
+(add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)

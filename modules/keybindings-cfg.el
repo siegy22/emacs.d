@@ -64,7 +64,7 @@
 
 (global-unset-key (kbd "M-x")) ; execute-extended-command
 (global-set-key (kbd "M-a") 'execute-extended-command)
-(global-set-key (kbd "M-q") 'shell-command)
+(global-set-key (kbd "M-q") 'projectile-run-shell)
 
 
 (global-unset-key (kbd "C-d"))
@@ -122,6 +122,7 @@
 (global-set-key (kbd "C-c C-w") 'whitespace-mode)
 
 ;;;; Searching
+(global-set-key (kbd "C-x f") 'projectile-grep)
 
 ;; Use regex searches by default.
 (global-unset-key (kbd "C-M-r")) ;; isearch-backwards
