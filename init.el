@@ -52,12 +52,6 @@
 (eval-and-compile
   (add-to-list 'load-path (expand-file-name "vendor" user-emacs-directory)))
 
-(use-package ido
-  :config
-  (setq ido-enable-flex-matching t)
-  (ido-everywhere t)
-  (ido-mode 1))
-
 (use-package ag
   :ensure t
   :commands (ag ag-regexp ag-project))
@@ -70,7 +64,7 @@
   :ensure t
   :bind (("M-a" . helm-M-x)
          ("C-x C-f" . helm-find-files)
-         ("C-x f" . helm-recentf)
+	 ("C-o" . helm-find-files)
          ("C-SPC" . helm-dabbrev)
          ("M-y" . helm-show-kill-ring)
          ("C-x b" . helm-buffers-list))
@@ -98,7 +92,7 @@
 	      ("M-H" . nil)))
 (use-package helm-swoop
   :ensure t
-  :bind (("M-m" . helm-swoop)
+  :bind (("C-f" . helm-swoop)
 	 ("M-M" . helm-swoop-back-to-last-point))
   :init
   (bind-key "M-m" 'helm-swoop-from-isearch isearch-mode-map))
@@ -113,7 +107,8 @@
   :ensure t
   :config
   (projectile-mode)
-  (setq projectile-enable-caching t))
+  (setq projectile-enable-caching t)
+  :bind (("C-x p" . projectile-switch-project)))
 
 (use-package helm-projectile
   :ensure t
@@ -139,13 +134,20 @@
 	    (setq ruby-indent-level 2
 		  ruby-deep-indent-paren nil
 		  ruby-bounce-deep-indent t
-		  ruby-hanging-indent-level 2)))
+		  ruby-hanging-indent-level 2
+		  ruby-insert-encoding-magic-comment nil)))
 
 (use-package rubocop
   :ensure t
   :defer t
   :init (add-hook 'ruby-mode-hook 'rubocop-mode))
 
+
+(use-package js
+  :ensure t
+  :defer t
+  :config (progn
+	    (setq js-indent-level 2)))
 
 (use-package minitest
   :bind ("M-e" . minitest-verify)
@@ -190,7 +192,7 @@
 
 	    ;; use eslint with web-mode for jsx files
 	    (flycheck-add-mode 'javascript-eslint 'web-mode)
-	    (flycheck-add-mode 'javascript-eslint 'js2-mode)
+	    (flycheck-add-mode 'javascript-eslint 'js-mode)
 
 	    ;; customize flycheck temp file prefix
 	    (setq-default flycheck-temp-prefix ".flycheck")
@@ -235,8 +237,8 @@
             (setq web-mode-markup-indent-offset 2
 		  web-mode-css-indent-offset 2
 		  web-mode-code-indent-offset 2
-		  web-mode-script-padding 2
-		  web-mode-style-padding 2))
+		  web-mode-script-padding 0
+		  web-mode-style-padding 0))
   :init (bind-key "M-w d" 'django-web-mode))
 
 (use-package markdown-mode
@@ -250,13 +252,6 @@
 	    (setq coffee-indent-tabs-mode nil
 		  coffee-tab-width 2)))
 
-(use-package js2-mode
-  :ensure t
-  :mode (("\\.es6\\'" . js2-mode)
-	 ("\\.js\\'" . js2-mode))
-  :config (progn
-	    (setq js2-basic-offset 2)))
-
 (use-package robe
   :ensure t
   :bind (("C-r C-j" . robe-jump)
@@ -266,9 +261,14 @@
 
 (use-package persp-projectile
   :ensure t
-  :bind (("C-x p" . projectile-persp-switch-project)
+  :bind (("C-x p" . projectile-switch-project)
 	 ("C-p s" . persp-switch))
   :config (persp-mode))
+
+(use-package dockerfile-mode
+  :ensure t
+  :mode ("Dockerfile\\'" . dockerfile-mode))
+
 
 (defun my/use-eslint-from-node-modules ()
   (let* ((root (locate-dominating-file
@@ -280,3 +280,19 @@
     (when (and eslint (file-executable-p eslint))
       (setq-local flycheck-javascript-eslint-executable eslint))))
 (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
+
+(setq flycheck-flake8rc "/Users/siegy/projects/grossratsgeschaefte/backend/.flake8")
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (dockerfile-mode py-isort yaml-mode websocket web-mode vue-html-mode use-package typescript-mode twilight-bright-theme ssass-mode slim-mode scss-mode rubocop rspec-mode robe rbenv python-mode persp-projectile mmm-mode minitest markdown-mode magit jsx-mode js2-mode helm-swoop helm-projectile helm-descbinds helm-ag gh flycheck-pyflakes exec-path-from-shell elpy edit-indirect drag-stuff diminish coffee-mode ag))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

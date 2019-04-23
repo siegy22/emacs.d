@@ -12,6 +12,7 @@
 (global-unset-key (kbd "C-f")) ; forward-char
 (global-unset-key (kbd "C-p")) ; previous-line
 (global-unset-key (kbd "C-n")) ; next-line
+(global-unset-key (kbd "M-t")) ; transpose-words
 (global-unset-key (kbd "C-M-i"))
 (global-set-key (kbd "M-j") 'backward-char)
 (global-set-key (kbd "M-l") 'forward-char)
@@ -96,9 +97,8 @@
 (global-unset-key (kbd "C-x C-f")) ; find-file
 (global-unset-key (kbd "C-x h")) ; mark-whole-buffer
 (global-unset-key (kbd "C-x C-w")) ; write-file
-(global-set-key (kbd "C-o") 'find-file)
 (global-set-key (kbd "C-S-n") 'write-file)
-(global-set-key (kbd "C-S-a") 'mark-whole-buffer)
+(global-set-key (kbd "M-s a") 'mark-whole-buffer)
 
 ;; Help should search more than just commands
 (global-set-key (kbd "C-h a") 'apropos)
@@ -126,7 +126,6 @@
 
 ;; Use regex searches by default.
 (global-unset-key (kbd "C-M-r")) ;; isearch-backwards
-(global-set-key (kbd "C-f") 'isearch-forward-regexp)
 (global-set-key (kbd "C-*") 'isearch-forward-at-point)
 (define-key isearch-mode-map (kbd "C-f") 'isearch-repeat-forward)
 

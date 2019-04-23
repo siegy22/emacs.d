@@ -12,3 +12,7 @@ projectile-bookmarks.eld
 
 ido.last
 flycheck_init.el
+recentf
+tramp
+network-security.data
+transient/
